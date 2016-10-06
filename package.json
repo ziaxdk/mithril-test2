@@ -1,0 +1,22 @@
+{
+  "name": "mkthril-test2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc && concurrently \"npm run tsc:w\" \"npm run lite\" ",
+    "lite": "lite-server",
+    "tsc": "tsc",
+    "tsc:w": "tsc -w"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^3.1.0"
+  },
+  "dependencies": {
+    "mithril": "^0.2.5",
+    "purecss": "^0.6.0"
+  }
+}
