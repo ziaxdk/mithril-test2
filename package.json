@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "tsc && concurrently \"npm run tsc:w\" \"npm run lite\" ",
+    "starte": "tsc && concurrently \"npm run tsc:w\" \"npm run nodemon\" ",
     "lite": "lite-server",
+    "nodemon": "nodemon Server.js",
     "tsc": "tsc",
     "tsc:w": "tsc -w"
   },
@@ -13,9 +15,12 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "concurrently": "^3.1.0"
+    "concurrently": "^3.1.0",
+    "nodemon": "^1.11.0"
   },
   "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
     "mithril": "^0.2.5",
     "purecss": "^0.6.0"
   }

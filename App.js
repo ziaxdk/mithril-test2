@@ -7,7 +7,7 @@ var ContactWidget = (function () {
     function ContactWidget() {
     }
     ContactWidget.prototype.controller = function () {
-        var result = ['just one'];
+        var result = [];
         var onsave = function (value) {
             result.push(value);
         };
@@ -18,7 +18,7 @@ var ContactWidget = (function () {
     };
     ContactWidget.prototype.view = function (ctrl) {
         return m('div', [
-            m(new ContactForm(), ctrl),
+            m(new ContactForm(), null, ctrl),
             m(new ContactList(), ctrl)
         ]);
     };
@@ -27,10 +27,12 @@ var ContactWidget = (function () {
 var ContactForm = (function () {
     function ContactForm() {
     }
-    ContactForm.prototype.controller = function (data) {
-        var name = m.prop('name');
-        var save = function () {
-            data.onsave(name());
+    ContactForm.prototype.controller = function (data, args) {
+        console.log('controller', arguments);
+        var name = m.prop('');
+        var save = function (e) {
+            e.preventDefault();
+            args.onsave(name());
         };
         return {
             name: name,
@@ -38,9 +40,9 @@ var ContactForm = (function () {
         };
     };
     ContactForm.prototype.view = function (ctrl) {
-        return m('form.pure-form', [
-            m("input", { oninput: m.withAttr("value", ctrl.name), value: ctrl.name() }),
-            m("button[type=button].pure-button.pure-button-primary", { onclick: ctrl.save }, "Save")
+        return m('form.pure-form', { onsubmit: ctrl.save }, [
+            m("input", { oninput: m.withAttr("value", ctrl.name), value: ctrl.name(), placeholder: 'Enter something...' }),
+            m("button[type=submit].pure-button.pure-button-primary", "Save")
         ]);
     };
     return ContactForm;

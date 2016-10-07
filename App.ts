@@ -14,7 +14,7 @@ class ContactWidget implements Mithril.Component<IContactWidget> {
 
 
   controller() {
-    let result = ['just one'];
+    let result = [];
     let onsave = (value) => {
       result.push(value);
     }
@@ -27,7 +27,7 @@ class ContactWidget implements Mithril.Component<IContactWidget> {
 
   view(ctrl) {
     return m('div', [
-      m(new ContactForm(), ctrl),
+      m(new ContactForm(), null , ctrl),
       m(new ContactList(), ctrl)
     ]);
   }
@@ -35,16 +35,18 @@ class ContactWidget implements Mithril.Component<IContactWidget> {
 }
 
 interface IContactForm {
-  save(): void;
+  save(e): void;
   name: Mithril.Property<string>;
 }
 
 class ContactForm implements Mithril.Component<IContactForm> {
 
-  controller(data: IContactWidget) {
-    let name = m.prop('name');
-    let save = () => {
-      data.onsave(name());
+  controller(data: IContactWidget, args) {
+    console.log('controller', arguments)
+    let name = m.prop('');
+    let save = (e) => {
+      e.preventDefault();
+      args.onsave(name());
     }
     return {
       name: name,
@@ -53,9 +55,9 @@ class ContactForm implements Mithril.Component<IContactForm> {
   }
 
   view(ctrl) {
-    return m('form.pure-form', [
-       m("input", { oninput: m.withAttr("value", ctrl.name), value: ctrl.name() }),
-       m("button[type=button].pure-button.pure-button-primary", { onclick: ctrl.save }, "Save")
+    return m('form.pure-form', { onsubmit: ctrl.save }, [
+       m("input", { oninput: m.withAttr("value", ctrl.name), value: ctrl.name(), placeholder: 'Enter something...' }),
+       m("button[type=submit].pure-button.pure-button-primary", "Save")
     ]);
   }
 

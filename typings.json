@@ -1,5 +1,10 @@
 {
   "globalDependencies": {
-    "mithril": "registry:dt/mithril#0.0.0+20160501155657"
+    "mithril": "registry:dt/mithril#0.0.0+20160501155657",
+    "node": "registry:env/node#6.0.0+20160918225031"
+  },
+  "dependencies": {
+    "body-parser": "registry:npm/body-parser#1.15.2+20160815132839",
+    "express": "registry:npm/express#4.14.0+20160925001530"
   }
 }
