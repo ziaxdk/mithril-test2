@@ -15,6 +15,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "browserify": "^13.1.0",
     "concurrently": "^3.1.0",
     "nodemon": "^1.11.0"
   },
@@ -22,6 +23,8 @@
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
     "mithril": "^0.2.5",
-    "purecss": "^0.6.0"
+    "purecss": "^0.6.0",
+    "rxjs": "^5.0.0-beta.12",
+    "systemjs": "^0.19.39"
   }
 }
