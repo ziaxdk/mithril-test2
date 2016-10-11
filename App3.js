@@ -11,9 +11,16 @@ var ContactWidget3 = (function () {
                 m.redraw();
             });
         };
+        var onahead = function (obs$) {
+            obs$.subscribe(function (value) {
+                console.log('sub in widget3', value);
+                m.request({ method: 'POST', url: '/api/ahead', data: { ahead: value } });
+            });
+        };
         return {
             result: result,
-            onsave: onsave
+            onsave: onsave,
+            onahead: onahead
         };
     };
     ContactWidget3.prototype.view = function (ctrl) {
@@ -31,17 +38,6 @@ require('rxjs/add/operator/debounceTime');
 require('rxjs/add/operator/distinctUntilChanged');
 var ContactForm3 = (function () {
     function ContactForm3() {
-        this.config = function (e, isInitialized) {
-            if (isInitialized)
-                return;
-            Observable_1.Observable.fromEvent(e, "input")
-                .map(function (v) { return v.target.value; })
-                .debounceTime(500)
-                .distinctUntilChanged()
-                .subscribe(function (v) {
-                console.log('sub', v);
-            });
-        };
     }
     ContactForm3.prototype.controller = function (args) {
         var name = m.prop('');
@@ -55,16 +51,28 @@ var ContactForm3 = (function () {
             });
         };
         var disabled = m.prop(false);
+        var config = function (e, isInitialized) {
+            if (isInitialized)
+                return;
+            var ob$ = Observable_1.Observable.fromEvent(e, "input")
+                .map(function (v) { return v.target.value; })
+                .debounceTime(50)
+                .distinctUntilChanged();
+            // ob$.subscribe(v => {
+            //   console.log('sub', v);
+            // })
+            args.onahead(ob$);
+        };
         return {
             name: name,
             save: save,
             disabled: disabled,
-            onkeyupval: onkeyupval
+            config: config
         };
     };
     ContactForm3.prototype.view = function (ctrl, args, extras) {
         return m('form.pure-form', { onsubmit: ctrl.save }, [
-            m("input", { oninput: m.withAttr("value", ctrl.name), onkeyup: m.withAttr("value", ctrl.onkeyupval), value: ctrl.name(), placeholder: 'Enter something...', disabled: ctrl.disabled(), config: this.config }),
+            m("input", { oninput: m.withAttr("value", ctrl.name), value: ctrl.name(), placeholder: 'Enter something...', disabled: ctrl.disabled(), config: ctrl.config }),
             m("button[type=submit].pure-button.pure-button-primary", { disabled: ctrl.disabled() }, "Save")
         ]);
     };

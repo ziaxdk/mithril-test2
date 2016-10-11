@@ -15,6 +15,11 @@ app.post('/api/check', (req, res) => {
   // }, 1000)
 })
 
+app.post('/api/ahead', (req, res) => {
+  req.body.ahead = req.body.ahead + '... ahead of time...';
+  res.send(req.body);
+});
+
 app.listen(3000, () => {
   console.log('Listening...')
 })

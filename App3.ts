@@ -3,11 +3,10 @@
 interface IContactWidget3 {
   onsave(value: string, done: () => void): void;
   result: string[];
+  onahead(obs$: Observable<string>);
 }
 
 class ContactWidget3 implements Mithril.Component<IContactWidget3> {
-
-
   controller() {
     let result = [];
     let onsave = (value, done) => {
@@ -17,10 +16,18 @@ class ContactWidget3 implements Mithril.Component<IContactWidget3> {
         m.redraw();
       });
     }
+    let onahead = (obs$: Observable<string>) => {
+      obs$.subscribe(value => {
+        console.log('sub in widget3', value);
+        m.request({ method: 'POST', url: '/api/ahead', data: { ahead: value } });
+        
+      });
+    };
 
     return {
       result: result,
-      onsave: onsave
+      onsave: onsave,
+      onahead: onahead
     };
   }
 
@@ -37,7 +44,7 @@ interface IContactForm3 {
   save(e): void;
   name: Mithril.Property<string>;
   disabled: Mithril.Property<boolean>;
-  onkeyupval: Mithril.Property<string>;
+  config(e: EventTarget, isInitialized: boolean): void;
 }
 
 import { Observable } from 'rxjs/Observable';
@@ -47,18 +54,6 @@ import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 
 class ContactForm3 implements Mithril.Component<IContactForm3> {
-
-  config = (e, isInitialized) => {
-    if (isInitialized) return;
-    Observable.fromEvent(e, "input")
-      .map((v: any) => v.target.value)
-      .debounceTime(500)
-      .distinctUntilChanged()
-      .subscribe((v) => {
-      console.log('sub', v);
-    })
-  }
-
   controller(args: IContactWidget3) {
     let name = m.prop('');
     let onkeyupval = m.prop('');
@@ -71,17 +66,28 @@ class ContactForm3 implements Mithril.Component<IContactForm3> {
       });
     }
     let disabled = m.prop(false);
+    let config = (e: EventTarget, isInitialized: boolean) => {
+      if (isInitialized) return;
+      let ob$ = Observable.fromEvent(e, "input")
+        .map((v: any) => v.target.value)
+        .debounceTime(50)
+        .distinctUntilChanged();
+      // ob$.subscribe(v => {
+      //   console.log('sub', v);
+      // })
+      args.onahead(ob$);
+    }
     return {
       name: name,
       save: save,
       disabled: disabled,
-      onkeyupval: onkeyupval
+      config: config
     };
   }
 
   view(ctrl, args, extras) {
     return m('form.pure-form', { onsubmit: ctrl.save }, [
-       m("input", { oninput: m.withAttr("value", ctrl.name), onkeyup: m.withAttr("value", ctrl.onkeyupval), value: ctrl.name(), placeholder: 'Enter something...', disabled: ctrl.disabled(), config: this.config }),
+       m("input", { oninput: m.withAttr("value", ctrl.name), value: ctrl.name(), placeholder: 'Enter something...', disabled: ctrl.disabled(), config: ctrl.config }),
        m("button[type=submit].pure-button.pure-button-primary", { disabled: ctrl.disabled() }, "Save")
     ]);
   }

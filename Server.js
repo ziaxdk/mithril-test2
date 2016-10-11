@@ -10,6 +10,10 @@ app.post('/api/check', function (req, res) {
     res.send(req.body);
     // }, 1000)
 });
+app.post('/api/ahead', function (req, res) {
+    req.body.ahead = req.body.ahead + '... ahead of time...';
+    res.send(req.body);
+});
 app.listen(3000, function () {
     console.log('Listening...');
 });
